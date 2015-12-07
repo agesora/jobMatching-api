@@ -2,13 +2,16 @@
     margin:0;
 }
 .firstpage .title {
-    font-size: 55pt
+    font-size: 55pt;
+    color:white;
 }
 
 .firstpage .title2 {
-    font-size: 31pt
+    font-size: 31pt;
+     color:white;
 }
 .firstpage .btn {
+    margin-top: 10px;
     height:40px;
 }
 .firstpage {
@@ -28,11 +31,50 @@
 .ability-remove-btn{
     cursor: pointer;
 }
+
+#result_table th{
+    text-align: center;
+}
+#result_table > tbody tr,.result_table > tbody td{
+    cursor: pointer;
+}
+
+#modal-body dd{
+     font-size: 14px;
+}
+.intro{
+    color:white;
+    font-size:25pt;
+}
+.intro blockquote p,.intro blockquote pre{
+    color:white;
+    font-size:15pt;
+}
+.intro a{
+    color:white;
+    font-size:30pt;
+}
 @media(max-width: 768px) {
     .firstpage .title {
-        font-size: 25pt
+        font-size: 23pt
     }
     .firstpage .title2 {
         font-size: 15pt
     }
+    .intro{
+    color:white;
+    font-size:12pt;
+}
+    .intro blockquote p,.intro blockquote pre{
+    color:white;
+    font-size:10pt;
+}
+}
+.intro div{
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+}
+.intro pre{
+    text-align: left;
+    background:none;
 }

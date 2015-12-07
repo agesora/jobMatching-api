@@ -2,23 +2,110 @@
 <script src="js/jquery-ui.min.js"></script>
 <script src="js/jquery.fullPage.min.js"></script>
 <script type="text/javascript">
-	$(function(){
+$(function() {
     $('#fullpage').fullpage({
-    	"resize":true
+        'sectionsColor': [, "grey", "grey", "grey", "grey","grey","grey"],
+        "resize": true,
+        anchors: ['page1', 'page2', 'page3', 'page4'],
     });
 })
-
 </script>
-
 <div id="fullpage">
     <div class="section firstpage text-center">
-	{{> first }}
+        {{> first }}
     </div>
-    <div class="section ">
-        <div class="slide">第三屏的第一屏</div>
-        <div class="slide">第三屏的第二屏</div>
-        <div class="slide">第三屏的第三屏</div>
-        <div class="slide">第三屏的第四屏</div>
+    <div class="section text-center intro">
+        <div class="row">
+            使用javascript的es6语法编写的匹配组件
+        </div>
+        <div class="row">
+            帮助选择适合的职业
+        </div>
     </div>
-    <div class="section">第四屏</div>
+    <div class="section text-left intro">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                轻松安装组件：
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <blockquote>
+                    <p>npm install node-jobmatch</p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    <div class="section text-left intro">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <blockquote>
+                    <p>简历，招聘信息自定义：
+                        <pre>
+//招聘
+var r={
+    //模块
+    rneed_job: [{
+        //内容
+        job_name: &quot;项目经理&quot;,
+        type: &quot;IT&quot;,
+        work_time: {
+            start: &quot;12:00&quot;,
+            end: &quot;21:00&quot;
+        },
+        job_type: 1,
+        salary: {
+            type: 0
+        }
+    }]
+}
+</pre></p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    <div class="section text-left intro">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <blockquote>
+                    <p>个性化定义匹配规则
+                        <pre>
+var rule=new jobMatching.Rule(false);
+rule.use('简历中的模块名', '招聘信息中的模块名', 这一模块的总分, function (j, r, cache) {
+    对比方法...
+    return { mark: 返回分数, tonext: 'go' };
+},function(mark,cache){//处理完毕后的回调
+    return true;
+});
+
+
+</pre></p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    <div class="section text-left intro">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <blockquote>
+                    <p>处理完毕后，还可以对处理过的信息做后续处理
+                        <pre>
+jobMatching.match({ job_hunter: j, recruitments: r }).addup().exec(function (err, result) {
+    if (err) {
+        console.log(err);
+    }
+    else {
+        console.log(JSON.stringify(result));
+    }
+
+</pre></p>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    <div class="section text-center intro">
+        <div class="row">
+            <a href="/demo"> 来尝试一下吧 </a>
+        </div>
+    </div>
 </div>

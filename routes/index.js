@@ -17,7 +17,7 @@ router.post('/demo/match', function(req, res, next) {
 	var now=new Date();
 	var birthday=new Date(req.body.person_info.birthday);
 	req.body.person_info.age=now.getFullYear()-birthday.getFullYear();
- 	var r={
+ 	var r=[{
  		_id:1,
  		job_info:{
  			job_name:"IT工程师",
@@ -37,13 +37,9 @@ router.post('/demo/match', function(req, res, next) {
  			value:60,
  			need:0
  		}]
- 	};
+ 	}];
  	jobmatch(req.body,r,function(err,result){
- 		var output={
- 			recruitment:r.job_info,
- 			mark:result
- 		}
- 		res.send(output);
+ 		res.send(result);
  	});
 });
 module.exports = router;

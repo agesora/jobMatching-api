@@ -1,17 +1,18 @@
 <script type="text/javascript">
 var resume={};
 resume.ability_cache=new Array();
+var finaldata;
 $(window).ready(function(){
 	$('#add_ability').click(function(event) {
 		var next_no=resume.ability_cache.length;
 		var a=`<div id="ability_${next_no}" class="form-group">
-                		<div class="label_div col-xs-2 text-center">
+                		<div class="label_div col-sm-2 text-center">
                     		<input type="text" style="width:100%; border:none;" placeholder="技能名称"/>
                     	</div>
                     	<div class="col-xs-6 slider_div slider-row-offset">
                     		<div class="slider"></div>
                 		</div>
-                		<div class="col-xs-2" style="padding-left:0px;" id="result_${next_no}">精通</div>
+                		<div class="col-xs-2" style="padding-left:0px;" id="result_${next_no}">掌握</div>
                         <div id="ability_remove_btn_${next_no}" class="col-xs-2 ability-remove-btn">X</div>
                 	</div>`;
     	$("#a_group").append(a);
@@ -88,6 +89,8 @@ $(window).ready(function(){
 				resume.ability.push(obj);
 			}
 			delete resume.ability_cache;
+            $(this).html("匹配中");
+            $(this).attr("disabled",true);
 			$.ajax({
 				type: "POST",     //提交方式
         	    contentType: "application/json; charset=utf-8",   //内容类型
@@ -96,7 +99,84 @@ $(window).ready(function(){
 				// traditional: true,
   				data:JSON.stringify(resume),
   				success:function(data){
+                   finaldata=data;
   					console.log(data);
+                    for(var i in data){
+                        var obj=data[i];
+                        var tr=`
+                        <tr data-no="${i}" data-toggle="modal" data-target="#myModal" >
+                            <td>${obj.recruitment.job_info.job_name}</td>
+                            <td>${obj.recruitment.job_info.company}</td>
+                            <td>${obj.match_degree}%</td>
+                        </tr>
+                        `;
+                        switch(obj.recruitment.person_info.degree[0]){
+                            case 1:
+                                obj.recruitment.person_info.degree_name="无限制";
+                                break;
+                            case 2:
+                                obj.recruitment.person_info.degree_name="高职及以上";
+                                break;
+                            case 3:
+                                obj.recruitment.person_info.degree_name="大专及以上";
+                                break;
+                            case 4:
+                                obj.recruitment.person_info.degree_name="本科及以上";
+                                break;
+                            case 5:
+                                obj.recruitment.person_info.degree_name="硕士及以上";
+                                break;
+                            case 6:
+                                obj.recruitment.person_info.degree_name="博士";
+                                break;
+                            default:
+                                obj.recruitment.person_info.degree_name="未知";
+                                break;
+                        }
+                        $("#result_table").children("tbody").append(tr);
+                        var abilitylist=`
+                            <dl>
+                                <dt>能力需求</dt>
+                        `;
+                        for(var i1 in obj.recruitment.ability){
+                            var value=obj.recruitment.ability[i1].value;
+                            var level;
+                            if(value<30){
+		    			       level="熟悉";
+		    		        }else if(value<60){
+		    			       level="掌握";
+		    		        }else if(value<90){
+		    			       level="精通";
+		    		        }else if(value<=100){
+		    			       level="完全精通";
+		    		        }
+                            abilitylist+=`<dd>${obj.recruitment.ability[i1].need==1?"必须":""}${level}${obj.recruitment.ability[i1].aname}</dd>`;
+                        }
+                        abilitylist+="<dl>";
+                        console.log(abilitylist);
+                        $(`tr[data-no=${i}]`).click(function(){
+                            $("#modal-body").html(`
+                                <dl>
+                                    <dt>公司简介</dt>
+                                    <dd>
+                                       需求岗位：${obj.recruitment.job_info.job_name}
+                                    <dd>
+                                    <dd>公司名称：${obj.recruitment.job_info.company}</dd>
+                                </dl>
+                                <dl>
+                                    <dt>要求</dt>
+                                    <dd>
+                                       年龄：${obj.recruitment.person_info.age[0]||0}岁${"到"+obj.recruitment.person_info.age[1]+"岁"||以上}
+                                    </dd>
+                                    <dd>性别：${obj.recruitment.person_info.sex=="all"?"全部":obj.recruitment.person_info.sex}</dd>
+                                    <dd>学历：${obj.recruitment.person_info.degree_name}</dd>
+                                </dl>
+                                ${abilitylist}
+                            `);
+                        });
+                    }
+                    $("#resume").css("display","none");
+                    $("#result_table_container").css("display","block");
   				},
   				error:function(error){
   					console.log(error);
@@ -107,11 +187,11 @@ $(window).ready(function(){
 });
 </script>
 
-<div class="container">
+<div id="resume" class="container">
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="row text-left col-md-12">
-                <h6>填写一份匹配用的简历：</h6>
+                <h7>填写一份匹配用的简历：</h7>
             </div>
             <form class="form-horizontal ">
                 <div class="form-group">
@@ -215,3 +295,43 @@ $(window).ready(function(){
     </div>
 </div>
 
+
+<div id="result_table_container" style="display:none" class="container">
+    <div class="row">
+    <table id="result_table" class="table table-hover text-center">
+        <thead>
+            <tr>
+                <th>职位名称</th>
+                <th>公司名称</th>
+                <th>匹配度</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-8">
+           <button type="button" class="btn btn-primary btn-block" onclick="window.location.href='/'">返回主页</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">招聘详情</h4>
+      </div>
+      <div id="modal-body" class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+       
+      </div>
+    </div>
+  </div>
+</div>
