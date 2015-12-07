@@ -1,0 +1,217 @@
+<script type="text/javascript">
+var resume={};
+resume.ability_cache=new Array();
+$(window).ready(function(){
+	$('#add_ability').click(function(event) {
+		var next_no=resume.ability_cache.length;
+		var a=`<div id="ability_${next_no}" class="form-group">
+                		<div class="label_div col-xs-2 text-center">
+                    		<input type="text" style="width:100%; border:none;" placeholder="技能名称"/>
+                    	</div>
+                    	<div class="col-xs-6 slider_div slider-row-offset">
+                    		<div class="slider"></div>
+                		</div>
+                		<div class="col-xs-2" style="padding-left:0px;" id="result_${next_no}">精通</div>
+                        <div id="ability_remove_btn_${next_no}" class="col-xs-2 ability-remove-btn">X</div>
+                	</div>`;
+    	$("#a_group").append(a);
+    	resume.ability_cache[next_no]={
+    		aname:null,
+    	};
+    	var $slider = $(`#ability_${next_no}`).children('.slider_div').children('.slider');
+		  	$slider.slider({
+		    	min: 0,
+		    	max: 101,
+		    	value: 1,
+		    	orientation: "horizontal",
+		    	range: "min",
+		    	slide : function(event, ui) {
+		    		var value=$slider.slider("value");
+		    		var res=$(`#result_${next_no}`);
+		    		if(value<30){
+		    			res.html("熟悉");
+		    		}else if(value<60){
+		    			res.html("掌握");
+		    		}else if(value<90){
+		    			res.html("精通");
+		    		}else if(value<=100){
+		    			res.html("专家");
+		    		}
+		    		// resume.ability_cache[next_no].value=value;
+		    	}
+		  	});
+		var ability_name=$(`#ability_${next_no}`).children('.label_div').children('input');
+		ability_name.focus();
+		ability_name.blur(function(event) {
+			if(ability_name.val()){
+				resume.ability_cache[next_no].aname=ability_name.val().toLowerCase();
+			}else{
+				$(`#ability_${next_no}`).remove();
+				delete resume.ability_cache[next_no];
+			}
+		});
+		var remove_btn=$(`#ability_remove_btn_${next_no}`);
+		remove_btn.click(function(){
+			$(`#ability_${next_no}`).remove();
+			delete resume.ability_cache[next_no];
+		});
+	});
+	$("#submit").click(function(){
+		var flag=true;
+		var ids=['name','sex','birthday_date','degree'];
+		for(var id of ids){
+			var need_au=$("#"+id);
+			if(need_au.val()==""){
+				need_au.parent().addClass('has-error');
+				flag=false;
+			}
+			else{
+				need_au.parent().removeClass('has-error');
+				need_au.parent().addClass('has-success');
+			}
+		}
+		if(flag){
+			resume.person_info={
+				name:$("#name").val().trim(),
+				sex:$("#sex").val(),
+				birthday:$("#birthday_date").val().split(" ")[0],
+				degree:$("#degree").val()
+			};
+			resume.ability=new Array();
+			for(var i in resume.ability_cache){
+				if(resume.ability_cache[i]){
+                    var obj={
+                        aname:resume.ability_cache[i].aname,
+                        value:$(`#ability_${i}`).children('.slider_div').children('.slider').slider("value")
+                    }
+                }
+				resume.ability.push(obj);
+			}
+			delete resume.ability_cache;
+			$.ajax({
+				type: "POST",     //提交方式
+        	    contentType: "application/json; charset=utf-8",   //内容类型
+        	    dataType: "json",     //类型
+				url:"/demo/match",
+				// traditional: true,
+  				data:JSON.stringify(resume),
+  				success:function(data){
+  					console.log(data);
+  				},
+  				error:function(error){
+  					console.log(error);
+  				}
+			});
+		}
+	});
+});
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="row text-left col-md-12">
+                <h6>填写一份匹配用的简历：</h6>
+            </div>
+            <form class="form-horizontal ">
+                <div class="form-group">
+                    <div class="col-md-5">
+                        <hr size="1" color="#999999">
+                    </div>
+                    <div class="col-md-2 text-center">
+                       <span>个人信息 </span>
+                    </div>
+                    <div class="col-md-5">
+                        <hr size="1" color="#999999">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label">姓名</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="name" placeholder="姓名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="sex" class="col-sm-2 control-label">性别</label>
+                    <div class="col-sm-8">
+                        <select id="sex" class="form-control">
+                            <option value="">请选择</option>
+                            <option>男</option>
+                            <option>女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="birthday" class="col-sm-2 control-label">出生年月</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-12 input-group date form_datetime" data-date="" data-date-format="yyyy年mm月dd日" data-link-field="birthday_date">
+                            <input id="birthday" class="form-control date-input" size="16" type="text" value="" placeholder="出生年月" readonly>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                        <input id="birthday_date" type="hidden" value="" />
+                        <script type="text/javascript">
+                        var startDate = new Date();
+                        startDate.setFullYear(startDate.getFullYear() - 80);
+                        $('.form_datetime').datetimepicker({
+                            language: 'zh-CN',
+                            weekStart: 1,
+                            // todayBtn: 1,
+                            autoclose: 1,
+                            startDate: startDate,
+                            endDate: new Date(),
+                            todayHighlight: 1,
+                            startView: 2,
+                            minView: 2,
+                            forceParse: 0
+                        });
+                        </script>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="degree" class="col-sm-2 control-label">学历</label>
+                    <div class="col-sm-8">
+                        <select id="degree" class="form-control">
+                            <option value="">请选择</option>
+                            <option value="6">博士</option>
+                            <option value="5">硕士</option>
+                            <option value="4">本科</option>
+                            <option value="3">大专</option>
+                            <option value="2">高职</option>
+                            <option value="1">高中及以下</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-5">
+                        <hr size="1" color="#999999">
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <span>能力</span>
+                    </div>
+                    <div class="col-md-5">
+                        <hr size="1" color="#999999">
+                    </div>
+                </div>
+                <div id="ability" class="form-group">
+                	<div id="a_group">
+                	</div>
+                	<div lass="col-md-12">
+                    	<button id="add_ability" type="button" class="btn btn-block btn-link">添加一条能力</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                	<div class="col-md-12">
+                        <hr size="1" color="#999999">
+                    </div>
+                </div>
+                <div class="form-group">
+                	<div class="col-md-4 col-md-offset-4">
+				 		<button id="submit" type="button" class="btn btn-primary btn-block">提交匹配</button>
+                	</div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+

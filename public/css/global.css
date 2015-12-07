@@ -1,0 +1,38 @@
+.row{
+    margin:0;
+}
+.firstpage .title {
+    font-size: 55pt
+}
+
+.firstpage .title2 {
+    font-size: 31pt
+}
+.firstpage .btn {
+    height:40px;
+}
+.firstpage {
+    background: url('../background-fullpage.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.date-input:read-only{
+	background: white;
+    color:black;
+}
+
+.slider-row-offset{
+    padding-top: 13px;
+}
+.ability-remove-btn{
+    cursor: pointer;
+}
+@media(max-width: 768px) {
+    .firstpage .title {
+        font-size: 25pt
+    }
+    .firstpage .title2 {
+        font-size: 15pt
+    }
+}
