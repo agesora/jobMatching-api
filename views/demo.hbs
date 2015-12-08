@@ -107,7 +107,7 @@ $(window).ready(function(){
                         <tr data-no="${i}" data-toggle="modal" data-target="#myModal" >
                             <td>${obj.recruitment.job_info.job_name}</td>
                             <td>${obj.recruitment.job_info.company}</td>
-                            <td>${obj.match_degree}%</td>
+                            <td>${parseInt(obj.match_degree)}%</td>
                         </tr>
                         `;
                         switch(obj.recruitment.person_info.degree[0]){
