@@ -153,23 +153,23 @@ $(window).ready(function(){
                             abilitylist+=`<dd>${obj.recruitment.ability[i1].need==1?"必须":""}${level}${obj.recruitment.ability[i1].aname}</dd>`;
                         }
                         abilitylist+="<dl>";
-                        console.log(abilitylist);
                         $(`tr[data-no=${i}]`).click(function(){
+                            var i=$(this).attr("data-no");
                             $("#modal-body").html(`
                                 <dl>
                                     <dt>公司简介</dt>
                                     <dd>
-                                       需求岗位：${obj.recruitment.job_info.job_name}
+                                       需求岗位：${data[i].recruitment.job_info.job_name}
                                     <dd>
-                                    <dd>公司名称：${obj.recruitment.job_info.company}</dd>
+                                    <dd>公司名称：${data[i].recruitment.job_info.company}</dd>
                                 </dl>
                                 <dl>
                                     <dt>要求</dt>
                                     <dd>
-                                       年龄：${obj.recruitment.person_info.age[0]||0}岁${"到"+obj.recruitment.person_info.age[1]+"岁"||以上}
+                                       年龄：${data[i].recruitment.person_info.age[0]||0}岁${"到"+data[i].recruitment.person_info.age[1]+"岁"||以上}
                                     </dd>
-                                    <dd>性别：${obj.recruitment.person_info.sex=="all"?"全部":obj.recruitment.person_info.sex}</dd>
-                                    <dd>学历：${obj.recruitment.person_info.degree_name}</dd>
+                                    <dd>性别：${data[i].recruitment.person_info.sex=="all"?"全部":data[i].recruitment.person_info.sex}</dd>
+                                    <dd>学历：${data[i].recruitment.person_info.degree_name}</dd>
                                 </dl>
                                 ${abilitylist}
                             `);
@@ -183,6 +183,9 @@ $(window).ready(function(){
   				}
 			});
 		}
+        else{
+            alert("有必填项未填");
+        }
 	});
 });
 </script>
@@ -285,6 +288,8 @@ $(window).ready(function(){
                         <hr size="1" color="#999999">
                     </div>
                 </div>
+               
+                
                 <div class="form-group">
                 	<div class="col-md-4 col-md-offset-4">
 				 		<button id="submit" type="button" class="btn btn-primary btn-block">提交匹配</button>
